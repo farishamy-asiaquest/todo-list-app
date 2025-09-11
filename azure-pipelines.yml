@@ -4,24 +4,21 @@ trigger:
       - main
 
 pool:
-  vmImage: ubuntu-latest
+  name: 'Azure Pipelines'   # your pool name
 
 variables:
   sshServiceConnection: 'RnD Droplet (DigitalOcean)'
-  deployDir: '/home/dev/webapp/todo-list-app'   # confirm this absolute path
+  deployDir: '/home/dev/webapp/todo-list-app'
   branch: 'main'
-  composeFile: 'compose.yaml'                   # change if you use docker-compose.yml
-  useSudo: 'false'                              # you said no sudo needed
+  composeFile: 'compose.yaml'
+  useSudo: 'false'
 
 stages:
 - stage: Deploy
-  displayName: Deploy to Server
   jobs:
   - job: Redeploy
-    displayName: Docker Compose Redeploy
     steps:
     - checkout: none
-
     - task: SSH@0
       displayName: Update repo and restart containers
       inputs:
@@ -30,19 +27,12 @@ stages:
         readyTimeout: '20000'
         commands: |
           set -e
-
           run() { if [ "$(useSudo)" = "true" ]; then sudo "$@"; else "$@"; fi; }
-
           cd "$(deployDir)"
-
-          # Ensure this is a git repo and hard-sync with origin/<branch>
-          git rev-parse --is-inside-work-tree >/dev/null 2>&1
           git fetch --depth 1 origin "$(branch)"
           git checkout -f "$(branch)"
           git reset --hard "origin/$(branch)"
           git clean -fd
-
-          # Redeploy with Docker Compose v2
           [ -f "$(composeFile)" ] || { echo "Missing $(composeFile)"; exit 1; }
           run docker compose -f "$(composeFile)" down --remove-orphans || true
           run docker compose -f "$(composeFile)" up -d --build
