@@ -1,31 +1,32 @@
 trigger:
   branches:
     include:
-      - main
-
+    - main
 pool:
-  name: 'Azure Pipelines'   # your pool name
-
+  name: 'Azure Pipelines'
 variables:
-  sshServiceConnection: 'RnD Droplet (DigitalOcean)'
-  deployDir: '/home/dev/webapp/todo-list-app'
-  branch: 'main'
-  composeFile: 'compose.yaml'
-  useSudo: 'false'
-
+- name: sshServiceConnection
+  value: 'RnD Droplet (DigitalOcean)'
+- name: deployDir
+  value: '/home/dev/webapp/todo-list-app'
+- name: branch
+  value: 'main'
+- name: composeFile
+  value: 'compose.yaml'
+- name: useSudo
+  value: 'false'
 stages:
 - stage: Deploy
   jobs:
   - job: Redeploy
     steps:
-    - checkout: none
     - task: SSH@0
       displayName: Update repo and restart containers
       inputs:
         sshEndpoint: '$(sshServiceConnection)'
-        runOptions: 'inline'
+        runOptions: commands
         readyTimeout: '20000'
-        commands: |
+        commands: |-
           set -e
           cd "$(deployDir)"
           git fetch --depth 1 origin "$(branch)"
