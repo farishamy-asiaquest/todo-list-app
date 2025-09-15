@@ -23,7 +23,7 @@ stages:
       displayName: Update repo and restart containers
       inputs:
         sshEndpoint: '$(sshServiceConnection)'
-        runOptions: commands
+        runOptions: 'inline'
         readyTimeout: '20000'
         commands: |
           set -e
