@@ -27,12 +27,11 @@ stages:
         readyTimeout: '20000'
         commands: |
           set -e
-          run() { if [ "$(useSudo)" = "true" ]; then sudo "$@"; else "$@"; fi; }
           cd "$(deployDir)"
           git fetch --depth 1 origin "$(branch)"
           git checkout -f "$(branch)"
           git reset --hard "origin/$(branch)"
           git clean -fd
           [ -f "$(composeFile)" ] || { echo "Missing $(composeFile)"; exit 1; }
-          run docker compose -f "$(composeFile)" down --remove-orphans || true
-          run docker compose -f "$(composeFile)" up -d --build
+          docker compose -f "$(composeFile)" down --remove-orphans || true
+          docker compose -f "$(composeFile)" up -d --build
