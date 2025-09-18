@@ -28,12 +28,11 @@ stages:
         readyTimeout: '20000'
         commands: |-
           set -e
-          export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
           cd "$(deployDir)"
-          git fetch --depth 1 origin "$(branch)"
-          git checkout -f "$(branch)"
-          git reset --hard "origin/$(branch)"
-          git clean -fd
+          /usr/bin/git fetch --depth 1 origin "$(branch)"
+          /usr/bin/git checkout -f "$(branch)"
+          /usr/bin/git reset --hard "origin/$(branch)"
+          /usr/bin/git clean -fd
           [ -f "$(composeFile)" ] || { echo "Missing $(composeFile)"; exit 1; }
           docker compose -f "$(composeFile)" down --remove-orphans || true
           docker compose -f "$(composeFile)" up -d --build
