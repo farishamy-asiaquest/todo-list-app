@@ -28,11 +28,24 @@ stages:
         readyTimeout: '20000'
         commands: |-
           set -e
-          cd "$(deployDir)"
-          /usr/bin/git fetch --depth 1 origin "$(branch)"
-          /usr/bin/git checkout -f "$(branch)"
-          /usr/bin/git reset --hard "origin/$(branch)"
-          /usr/bin/git clean -fd
+          echo "--- Running as user: ---"
+          whoami
+          echo "--- Starting in directory: ---"
+          pwd
+
+          echo "--- Attempting to change to deployment directory ---"
+          cd /home/dev/webapp/todo-list-app
+
+          echo "--- Now in directory: ---"
+          pwd
+          echo "--- Listing contents: ---"
+          ls -la
+
+          echo "--- Fetching latest changes from git ---"
+          git fetch --depth 1 origin "$(branch)"
+          git checkout -f "$(branch)"
+          git reset --hard "origin/$(branch)"
+          git clean -fd
           [ -f "$(composeFile)" ] || { echo "Missing $(composeFile)"; exit 1; }
           docker compose -f "$(composeFile)" down --remove-orphans || true
           docker compose -f "$(composeFile)" up -d --build
