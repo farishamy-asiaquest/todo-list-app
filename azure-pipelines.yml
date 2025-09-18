@@ -5,16 +5,16 @@ trigger:
 pool:
   name: 'Azure Pipelines'
 variables:
-- name: sshServiceConnection
-  value: 'RnD Droplet (DigitalOcean)'
-- name: deployDir
-  value: '/home/dev/webapp/todo-list-app'
-- name: branch
-  value: 'main'
-- name: composeFile
-  value: 'compose.yaml'
-- name: useSudo
-  value: 'false'
+  - name: sshServiceConnection
+    value: 'RnD Droplet (DigitalOcean)'
+  - name: deployDir
+    value: '/home/dev/webapp/todo-list-app'
+  - name: branch
+    value: 'main'
+  - name: composeFile
+    value: 'compose.yaml'
+  - name: useSudo
+    value: 'false'
 stages:
 - stage: Deploy
   jobs:
@@ -28,7 +28,7 @@ stages:
         readyTimeout: '20000'
         commands: |-
           set -e
-          cd "$(deployDir)"
+          cd "/home/dev/webapp/todo-list-app"
           git fetch --depth 1 origin "$(branch)"
           git checkout -f "$(branch)"
           git reset --hard "origin/$(branch)"
