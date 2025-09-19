@@ -8,7 +8,7 @@ variables:
   - name: sshServiceConnection
     value: 'RnD Droplet (DigitalOcean)'
   - name: deployDir
-    value: '/home/dev/todo-list-app'
+    value: '/home/dev/webapp/todo-list-app'
   - name: branch
     value: 'main'
   - name: composeFile
@@ -34,7 +34,7 @@ stages:
           pwd
 
           echo "--- Attempting to change to deployment directory ---"
-          cd /home/dev/todo-list-app
+          cd /home/dev/webapp/todo-list-app
 
           echo "--- Now in directory: ---"
           pwd
